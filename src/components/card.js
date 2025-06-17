@@ -30,7 +30,7 @@ const cardTemplate = document.querySelector('#card-template').content;
 
 // @todo: Функция создания карточки
 export function createCard(card, deleteCardFn, likeCardFn) {
-    const cardTemplateCopy = cardTemplate.querySelector('.card').cloneNode(true);
+    const cardTemplateCopy = getCardTemplate();
     const cardImage = cardTemplateCopy.querySelector('.card__image');
     const cardTitle = cardTemplateCopy.querySelector('.card__title');
     const cardButtonDelete = cardTemplateCopy.querySelector('.card__delete-button');
@@ -41,6 +41,10 @@ export function createCard(card, deleteCardFn, likeCardFn) {
     cardButtonDelete.addEventListener('click', deleteCardFn);
     cardLikeButton.addEventListener('click', likeCardFn);
     return cardTemplateCopy;
+}
+
+function getCardTemplate(){
+    return cardTemplate.querySelector('.card').cloneNode(true);
 }
 
 // @todo: Функция удаления карточки
