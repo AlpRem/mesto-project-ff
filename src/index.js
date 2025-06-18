@@ -1,6 +1,7 @@
 import './pages/index.css';
-import {initialCards, createCard, deleteCard, likeCard} from './components/card';
-import {openPopup, closePopup, submitEditProfileForm, submitAddCardForm} from './components/modal';
+import {createCard, deleteCard, likeCard} from './components/card';
+import {initialCards} from './components/cards';
+import {openPopup, closePopup} from './components/modal';
 
 const placeCardListUl = document.querySelector('.places__list');
 const editModalBtn = document.querySelector('.profile__edit-button');
