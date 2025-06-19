@@ -2,7 +2,7 @@
 const cardTemplate = document.querySelector('#card-template').content;
 
 // @todo: Функция создания карточки
-export function createCard(card, deleteCardFn, likeCardFn) {
+export function createCard(card, deleteCardFn, likeCardFn, openImageFn) {
     const cardTemplateCopy = getCardTemplate();
     const cardImage = cardTemplateCopy.querySelector('.card__image');
     const cardTitle = cardTemplateCopy.querySelector('.card__title');
@@ -13,6 +13,7 @@ export function createCard(card, deleteCardFn, likeCardFn) {
     cardTitle.textContent = card.name;
     cardButtonDelete.addEventListener('click', deleteCardFn);
     cardLikeButton.addEventListener('click', likeCardFn);
+    cardImage.addEventListener('click', openImageFn);
     return cardTemplateCopy;
 }
 

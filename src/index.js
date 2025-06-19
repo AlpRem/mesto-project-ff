@@ -1,7 +1,7 @@
 import './pages/index.css';
 import {createCard, deleteCard, likeCard} from './components/card';
 import {initialCards} from './components/cards';
-import {openPopup, closePopup} from './components/modal';
+import {openPopup, closePopup, openImagePopup} from './components/modal';
 
 const placeCardListUl = document.querySelector('.places__list');
 const editModalBtn = document.querySelector('.profile__edit-button');
@@ -12,15 +12,24 @@ const popupTypeImage = document.querySelector('.popup_type_image');
 const profileModalForm = popupTypeEdit.querySelector('.popup__form');
 const cardModalForm = popupTypeNewCard.querySelector('.popup__form');
 
+const popupNameInput = popupTypeEdit.querySelector('.popup__input_type_name');
+const profileTitle = document.querySelector('.profile__title');
+const popupDescriptionInput = popupTypeEdit.querySelector('.popup__input_type_description');
+const profileDescription = document.querySelector('.profile__description');
+
+
+
+const nameInput = popupTypeNewCard.querySelector('.popup__input_type_card-name');
+const linkInput = popupTypeNewCard.querySelector('.popup__input_type_url');
+
+
 // @todo: Вывод всех карточек
-initialCards.forEach((card) => placeCardListUl.append(createCard(card, deleteCard, likeCard)));
+initialCards.forEach((card) => placeCardListUl.append(createCard(card, deleteCard, likeCard, openImagePopup)));
 
 // @todo: Слушатель клика по кнопки редактирования профиля
 editModalBtn.addEventListener('click', () => {
-    popupTypeEdit.querySelector('.popup__input_type_name').value =
-        document.querySelector('.profile__title').textContent;
-    popupTypeEdit.querySelector('.popup__input_type_description').value =
-        document.querySelector('.profile__description').textContent;
+    popupNameInput.value = profileTitle.textContent;
+    popupDescriptionInput.value = profileDescription.textContent;
     openPopup(popupTypeEdit);
 });
 
@@ -29,28 +38,11 @@ addModalBtn.addEventListener('click', () => {
     openPopup(popupTypeNewCard);
 })
 
-// @todo: Слушатель клика по картинке карточки
-placeCardListUl.addEventListener('click', (evt) => {
-    if (evt.target.classList.contains('card__image')) {
-        const card = evt.target.closest('.card');
-        const cardTitle = card.querySelector('.card__title');
-        const image = popupTypeImage.querySelector('.popup__image');
-        const caption = popupTypeImage.querySelector('.popup__caption');
-
-        image.src = evt.target.src;
-        image.alt = evt.target.alt;
-        caption.textContent = cardTitle.textContent;
-        openPopup(popupTypeImage);
-    }
-});
-
 // @todo: Функция отправки данных окна редактирования профиля
 profileModalForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    document.querySelector('.profile__title').textContent =
-        profileModalForm.querySelector('.popup__input_type_name').value;
-    document.querySelector('.profile__description').textContent =
-        profileModalForm.querySelector('.popup__input_type_description').value;
+    profileTitle.textContent = popupNameInput.value;
+    profileDescription.textContent = popupDescriptionInput.value;
     closePopup(popupTypeEdit);
 });
 
@@ -58,14 +50,12 @@ profileModalForm.addEventListener('submit', (evt) => {
 // @todo: Функция отправки данных окна добавления новой карточки
 cardModalForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    const nameInput = popupTypeNewCard.querySelector('.popup__input_type_card-name');
-    const linkInput = popupTypeNewCard.querySelector('.popup__input_type_url');
     placeCardListUl.prepend(createCard({
         name: nameInput.value,
         link: linkInput.value
-        },deleteCard, likeCard));
+        },deleteCard, likeCard, openImagePopup));
     cardModalForm.reset();
-    closePopup(cardModalForm);
+    closePopup(popupTypeNewCard);
 });
 
 [popupTypeEdit, popupTypeNewCard, popupTypeImage].forEach((popup) => {
