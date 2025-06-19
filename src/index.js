@@ -17,11 +17,8 @@ const profileTitle = document.querySelector('.profile__title');
 const popupDescriptionInput = popupTypeEdit.querySelector('.popup__input_type_description');
 const profileDescription = document.querySelector('.profile__description');
 
-
-
 const nameInput = popupTypeNewCard.querySelector('.popup__input_type_card-name');
 const linkInput = popupTypeNewCard.querySelector('.popup__input_type_url');
-
 
 // @todo: Вывод всех карточек
 initialCards.forEach((card) => placeCardListUl.append(createCard(card, deleteCard, likeCard, openImagePopup)));
@@ -45,7 +42,6 @@ profileModalForm.addEventListener('submit', (evt) => {
     profileDescription.textContent = popupDescriptionInput.value;
     closePopup(popupTypeEdit);
 });
-
 
 // @todo: Функция отправки данных окна добавления новой карточки
 cardModalForm.addEventListener('submit', (evt) => {
