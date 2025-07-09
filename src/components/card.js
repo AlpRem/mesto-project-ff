@@ -41,16 +41,20 @@ function getCardTemplate(){
 
 // @todo: Функция установки/удаления сердечка (лайка)
 export function likeCard(id, likes, event, likeButtonElement, likeCountElement) {
-    const isLike = likeButtonElement.classList.toggle('card__like-button_is-active');
-    if (isLike) {
+    const isLike = likeButtonElement.classList.contains('card__like-button_is-active');
+
+
+    if (!isLike) {
         apiLikeCard(id)
             .then((data) => {
+                likeButtonElement.classList.add('card__like-button_is-active');
                 likeCountElement.textContent = data.likes.length || 0;
             })
             .catch((err) => console.error('Ошибка запроса лайка карты ', err));
     } else {
         likeNotCard(id)
             .then((data) => {
+                likeButtonElement.classList.remove('card__like-button_is-active');
                 if (likes !== undefined || data.likes.length === 0) {
                     likeCountElement.textContent = '';
                 } else {
