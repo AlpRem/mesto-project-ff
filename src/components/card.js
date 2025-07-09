@@ -40,9 +40,8 @@ function getCardTemplate(){
 }
 
 // @todo: Функция установки/удаления сердечка (лайка)
-export function likeCard(id, likes, event) {
-    const isLike = event.target.classList.toggle('card__like-button_is-active');
-    const likeCountElement = event.currentTarget.closest('.card').querySelector('.card__like-count');
+export function likeCard(id, likes, event, likeButtonElement, likeCountElement) {
+    const isLike = likeButtonElement.classList.toggle('card__like-button_is-active');
     if (isLike) {
         apiLikeCard(id)
             .then((data) => {
@@ -52,7 +51,7 @@ export function likeCard(id, likes, event) {
     } else {
         likeNotCard(id)
             .then((data) => {
-                if (likes!==undefined ||data.likes.length === 0) {
+                if (likes !== undefined || data.likes.length === 0) {
                     likeCountElement.textContent = '';
                 } else {
                     likeCountElement.textContent = data.likes.length || 0;

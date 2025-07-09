@@ -111,7 +111,8 @@ cardModalForm.addEventListener('submit', (evt) => {
             },
                 user._id,
                 handleDeleteCard,
-                (event) => likeCard(data._id, data.likes, event),
+                (event) => likeCard(data._id, data.likes, event, event.currentTarget,
+                    event.currentTarget.closest('.card').querySelector('.card__like-count')),
                 (link, name) => openImagePopup(link, name)));
         })
         .catch((err) => {
@@ -209,7 +210,8 @@ getProfile()
             placeCardListUl.append(createCard(card,
                 getCurrentUser()._id,
                 handleDeleteCard,
-                (event) => likeCard(card.id, card.likes, event),
+                (event) => likeCard(card.id, card.likes, event,
+                    event.currentTarget, event.currentTarget.closest('.card').querySelector('.card__like-count')),
                 (link, name) => openImagePopup(link, name)));
         })
     })
