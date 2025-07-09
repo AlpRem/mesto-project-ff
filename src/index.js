@@ -112,8 +112,7 @@ cardModalForm.addEventListener('submit', (evt) => {
             },
                 user._id,
                 handleDeleteCard,
-                (event) => likeCard(data._id, data.likes, event, event.currentTarget,
-                    event.currentTarget.closest('.card').querySelector('.card__like-count')),
+                likeCard,
                 (link, name) => openImagePopup(link, name)));
             cardModalForm.reset();
             clearValidation(cardModalForm, validationConfig);
@@ -209,8 +208,7 @@ getProfile()
             placeCardListUl.append(createCard(card,
                 getCurrentUser()._id,
                 handleDeleteCard,
-                (event) => likeCard(card.id, card.likes, event,
-                    event.currentTarget, event.currentTarget.closest('.card').querySelector('.card__like-count')),
+                likeCard,
                 (link, name) => openImagePopup(link, name)));
         })
             .catch((err) => {
@@ -220,9 +218,8 @@ getProfile()
     .catch((err) => console.error('Ошибка загрузки профиля ', err));
 
 // @todo: Функция удаления карточки
-function handleDeleteCard(event) {
-    const cardElement = event.target.closest('.card');
-    popupDelete.dataset.cardId = cardElement.dataset.cardId;
+function handleDeleteCard(cardId) {
+    popupDelete.dataset.cardId = cardId;
     openPopup(popupDelete);
 }
 

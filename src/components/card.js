@@ -21,13 +21,13 @@ export function createCard(card, userId, deleteCardHandler, likeCardFn, openImag
         cardLikeCount.textContent = card.likes.length;
     if (card.owner === undefined || card.owner.id === undefined || userId !== card.owner.id)
         cardIconDelete.classList.add('card__delete-button-disible');
-    cardButtonDelete.addEventListener('click', deleteCardHandler);
-    cardLikeButton.addEventListener('click', likeCardFn);
+    cardButtonDelete.addEventListener('click', () => deleteCardHandler(card.id));
+    cardLikeButton.addEventListener('click', () => likeCardFn(card.id, card.likes, cardLikeButton, cardLikeCount))
     cardImage.addEventListener('click', () => openImageFn(card.link, card.name));
 
     if (card.likes!==undefined)
         card.likes.forEach(like => {
-            if (like.id === userId)
+            if (like._id === userId)
                 cardLikeButton.classList.add('card__like-button_is-active');
     })
     return cardTemplateCopy;
@@ -38,7 +38,7 @@ function getCardTemplate(){
 }
 
 // @todo: Функция установки/удаления сердечка (лайка)
-export function likeCard(id, likes, event, likeButtonElement, likeCountElement) {
+export function likeCard(id, likes, likeButtonElement, likeCountElement) {
     const isLike = likeButtonElement.classList.contains('card__like-button_is-active');
     if (!isLike) {
         apiLikeCard(id)
