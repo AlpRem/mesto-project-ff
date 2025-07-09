@@ -51,11 +51,7 @@ export function likeCard(id, likes, likeButtonElement, likeCountElement) {
         likeNotCard(id)
             .then((data) => {
                 likeButtonElement.classList.remove('card__like-button_is-active');
-                if (likes !== undefined || data.likes.length === 0) {
-                    likeCountElement.textContent = '';
-                } else {
-                    likeCountElement.textContent = data.likes.length || 0;
-                }
+                likeCountElement.textContent = data.likes.length > 0 ? data.likes.length : '';
             })
             .catch((err) => console.error('Ошибка запроса удаления лайка карты ', err));
     }
