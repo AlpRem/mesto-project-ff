@@ -1,7 +1,5 @@
 // @todo: Темплейт карточки
-// import {openPopup} from "./modal";
 import {apiLikeCard, likeNotCard} from "./api";
-// import {getCurrentUser} from "./state";
 
 const cardTemplate = document.querySelector('#card-template').content;
 
@@ -42,8 +40,6 @@ function getCardTemplate(){
 // @todo: Функция установки/удаления сердечка (лайка)
 export function likeCard(id, likes, event, likeButtonElement, likeCountElement) {
     const isLike = likeButtonElement.classList.contains('card__like-button_is-active');
-
-
     if (!isLike) {
         apiLikeCard(id)
             .then((data) => {
