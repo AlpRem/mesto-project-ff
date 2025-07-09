@@ -6,13 +6,19 @@ const config =  {
     }
 }
 
+function checkResponse(res) {
+    if (res.ok) {
+        return res.json();
+    }
+    return Promise.reject(`Ошибка ${res.status}`);
+}
+
 // @todo: Get-запрос на получение данных о профиле
 export function getProfile() {
     return fetch(`${config.url}/users/me`, {
         headers: config.headers
         })
-        .then((res) => res.json())
-        .catch((err) => console.error('Ошибка загрузки профиля ', err));
+        .then(checkResponse)
 }
 
 // @todo: Get-запрос на получение списка карточек
@@ -20,8 +26,7 @@ export function getCards() {
     return fetch(`${config.url}/cards`, {
         headers: config.headers
     })
-        .then((res) => res.json())
-        .catch((err) => console.error('Ошибка загрузки карточек ', err));
+        .then(checkResponse)
 }
 
 // @todo: Patch-запрос на редактирование данных о профиле
@@ -34,8 +39,7 @@ export function editProfile(profile) {
             about: profile.description
         })
     })
-        .then((res) =>  res.json())
-        .catch((err) => console.error('Ошибка запроса редактирования профиля ', err));
+        .then(checkResponse)
 }
 
 // @todo: Patch-запрос на редактирование данных о профиле
@@ -47,8 +51,7 @@ export function editImageProfile(urlImage) {
             avatar: urlImage
         })
     })
-        .then((res) =>  res.json())
-        .catch((err) => console.error('Ошибка запроса редактирования профиля ', err));
+        .then(checkResponse)
 }
 
 // @todo: Post-запрос на добавление новой карты
@@ -61,8 +64,7 @@ export function addCard(card) {
             link: card.link
         })
     })
-        .then((res) =>  res.json())
-        .catch((err) => console.error('Ошибка запроса добавления карты ', err));
+        .then(checkResponse)
 }
 
 // @todo: Delete-запрос на удаление карты
@@ -71,8 +73,7 @@ export function apiDeleteCard(cardId) {
         method: 'DELETE',
         headers: config.headers
     })
-        .then((res) =>  res.json())
-        .catch((err) => console.error('Ошибка запроса удаления карты ', err));
+        .then(checkResponse)
 }
 
 // @todo: Put-запрос на лайк карты
@@ -81,8 +82,7 @@ export function apiLikeCard(cardId) {
         method: 'PUT',
         headers: config.headers
     })
-        .then((res) =>  res.json())
-        .catch((err) => console.error('Ошибка запроса лайка карты ', err));
+        .then(checkResponse)
 }
 
 // @todo: Delete-запрос на удаление лайка карты
@@ -91,6 +91,5 @@ export function likeNotCard(cardId) {
         method: 'DELETE',
         headers: config.headers
     })
-        .then((res) =>  res.json())
-        .catch((err) => console.error('Ошибка запроса удаления лайка карты ', err));
+        .then(checkResponse)
 }

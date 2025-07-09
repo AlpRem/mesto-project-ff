@@ -1,6 +1,6 @@
 import './pages/index.css';
 import {createCard, deleteCard, likeCard} from './components/card';
-import {openPopup, closePopup, openImagePopup} from './components/modal';
+import {openPopup, closePopup} from './components/modal';
 import {clearValidation, enableValidation} from "./components/validation";
 import {addCard, apiDeleteCard, editImageProfile, editProfile, getCards, getProfile} from "./components/api";
 import {getCurrentUser, setCurrentUser} from "./components/state";
@@ -28,6 +28,10 @@ const nameInput = popupTypeNewCard.querySelector('.popup__input_type_card-name')
 const linkInput = popupTypeNewCard.querySelector('.popup__input_type_url');
 const linkAvatarInput = popupProfileImage.querySelector('.popup__input_type_url');
 const profileImage = document.querySelector('.profile__image');
+
+const popupImage = document.querySelector('.popup_type_image');
+const imageUrl = popupImage.querySelector('.popup__image');
+const captionImage = popupImage.querySelector('.popup__caption');
 
 // todo Конфигурация валидации
 const validationConfig = {
@@ -104,9 +108,11 @@ cardModalForm.addEventListener('submit', (evt) => {
                 owner: {
                     id: user._id
                 }
-            },(event) => deleteCard(data._id, popupDelete, event),
+            },
+                user._id,
+                handleDeleteCard,
                 (event) => likeCard(data._id, data.likes, event),
-                openImagePopup));
+                (link, name) => openImagePopup(link, name)));
         })
         .catch((err) => {
             console.error("Ошибка при сохранение карточки:", err);
@@ -139,6 +145,14 @@ cardDeleteModalForm.addEventListener('submit', (evt) => {
         });
 });
 
+// @todo: Функция открытия модального окна с картинкой (попапа)
+function openImagePopup(link, name) {
+    imageUrl.src = link;
+    imageUrl.alt = name;
+    captionImage.textContent = name;
+    openPopup(popupImage);
+}
+
 // @todo: Функция редактирования профиля через попап
 profileImageModalForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
@@ -169,29 +183,41 @@ profileImageModalForm.addEventListener('submit', (evt) => {
 enableValidation(validationConfig);
 
 // @todo: Получаем начальных данные (профиля и карточек)
-getProfile().then((data) => {
-    setCurrentUser(data);
-    profileTitle.textContent = data.name;
-    profileDescription.textContent = data.about;
-    profileImage.style.backgroundImage = `url(${data.avatar})`;
-    return getCards();
+getProfile()
+    .then((data) => {
+        setCurrentUser(data);
+        profileTitle.textContent = data.name;
+        profileDescription.textContent = data.about;
+        profileImage.style.backgroundImage = `url(${data.avatar})`;
+        return getCards()
+    .catch((err) => console.error('Ошибка загрузки профиля ', err));
 })
     .then((data) => {
-    const cards = data.map(card =>({
-        id: card._id,
-        name: card.name,
-        link: card.link,
-        likes: card.likes,
-        owner: {
-            id: card.owner._id,
-            name: card.owner.name,
-            about: card.owner.about,
-            avatar: card.owner.avatar
-        },
-    }));
-    cards.forEach(card => {
-        placeCardListUl.append(createCard(card,
-            (event) => deleteCard(card.id, popupDelete, event),
-            (event) => likeCard(card.id, card.likes, event), openImagePopup));
+        const cards = data.map(card =>({
+            id: card._id,
+            name: card.name,
+            link: card.link,
+            likes: card.likes,
+            owner: {
+                id: card.owner._id,
+                name: card.owner.name,
+                about: card.owner.about,
+                avatar: card.owner.avatar
+            },
+        }));
+        cards.forEach(card => {
+            placeCardListUl.append(createCard(card,
+                getCurrentUser()._id,
+                handleDeleteCard,
+                (event) => likeCard(card.id, card.likes, event),
+                (link, name) => openImagePopup(link, name)));
+        })
     })
-})
+    .catch((err) => console.error('Ошибка загрузки карточек ', err));
+
+// @todo: Функция удаления карточки
+function handleDeleteCard(event) {
+    const cardElement = event.target.closest('.card');
+    popupDelete.dataset.cardId = cardElement.dataset.cardId;
+    openPopup(popupDelete);
+}

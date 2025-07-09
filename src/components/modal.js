@@ -10,18 +10,6 @@ export function closePopup(popup) {
     document.removeEventListener('keydown', closePopupByKey);
 }
 
-// @todo: Функция открытия модального окна с картинкой (попапа)
-export function openImagePopup(evt) {
-    const card = evt.target.closest('.card');
-    const cardTitle = card.querySelector('.card__title');
-    const image = document.querySelector('.popup_type_image .popup__image');
-    const caption = document.querySelector('.popup_type_image .popup__caption');
-    image.src = evt.target.src;
-    image.alt = evt.target.alt;
-    caption.textContent = cardTitle.textContent;
-    openPopup(document.querySelector('.popup_type_image'));
-}
-
 // @todo: Служебная функция закрытия модального окна (попапа) при нажитие клавиши Esc
 function closePopupByKey(evt) {
     if (evt.key === 'Escape') {
