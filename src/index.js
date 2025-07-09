@@ -33,6 +33,11 @@ const popupImage = document.querySelector('.popup_type_image');
 const imageUrl = popupImage.querySelector('.popup__image');
 const captionImage = popupImage.querySelector('.popup__caption');
 
+const editProfileBtn = profileModalForm.querySelector('.popup__button');
+const editImageProfileBtn = popupTypeNewCard.querySelector('.popup__button');
+const addCardBtn = popupTypeNewCard.querySelector('.popup__button');
+
+
 // todo Конфигурация валидации
 const validationConfig = {
     formSelector: '.popup__form',
@@ -68,10 +73,7 @@ profileImageBtn.addEventListener('click', () => {
 // @todo: Функция отправки данных окна редактирования профиля
 profileModalForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    profileTitle.textContent = popupNameInput.value;
-    profileDescription.textContent = popupDescriptionInput.value;
-    const btn = popupTypeNewCard.querySelector('.popup__button');
-    btn.textContent = 'Сохранение...';
+    renderLoading(editProfileBtn, true);
     editProfile({
         title: popupNameInput.value,
         description: popupDescriptionInput.value
@@ -79,21 +81,20 @@ profileModalForm.addEventListener('submit', (evt) => {
         .then((data)=>{
             profileTitle.textContent = data.name;
             profileDescription.textContent = data.about;
+            closePopup(popupTypeEdit);
     })
         .catch((err) => {
             console.error("Ошибка при сохранение профиля:", err);
         })
         .finally(() => {
-            btn.textContent = 'Сохранение';
-            closePopup(popupTypeEdit);
+            renderLoading(editProfileBtn, false);
         });
 });
 
 // @todo: Функция отправки данных окна добавления новой карточки
 cardModalForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    const btn = popupTypeNewCard.querySelector('.popup__button');
-    btn.textContent = 'Сохранение...';
+    renderLoading(addCardBtn, true);
     const user = getCurrentUser();
     addCard({
         name: nameInput.value,
@@ -114,15 +115,15 @@ cardModalForm.addEventListener('submit', (evt) => {
                 (event) => likeCard(data._id, data.likes, event, event.currentTarget,
                     event.currentTarget.closest('.card').querySelector('.card__like-count')),
                 (link, name) => openImagePopup(link, name)));
+            cardModalForm.reset();
+            clearValidation(cardModalForm, validationConfig);
+            closePopup(popupTypeNewCard);
         })
         .catch((err) => {
             console.error("Ошибка при сохранение карточки:", err);
         })
         .finally(() => {
-            btn.textContent = 'Сохранение';
-            cardModalForm.reset();
-            clearValidation(cardModalForm, validationConfig);
-            closePopup(popupTypeNewCard);
+            renderLoading(addCardBtn, false);
         });
 
 });
@@ -137,13 +138,11 @@ cardDeleteModalForm.addEventListener('submit', (evt) => {
              if (cardToRemove) {
                  cardToRemove.remove();
              }
+             closePopup(popupDelete);
          })
         .catch((err) => {
             console.error("Ошибка при удаление карточки:", err);
         })
-        .finally(() => {
-            closePopup(popupDelete);
-        });
 });
 
 // @todo: Функция открытия модального окна с картинкой (попапа)
@@ -154,20 +153,20 @@ function openImagePopup(link, name) {
     openPopup(popupImage);
 }
 
-// @todo: Функция редактирования профиля через попап
+// @todo: Функция редактирования аватара профиля через попап
 profileImageModalForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-    const btn = popupTypeNewCard.querySelector('.popup__button');
-    btn.textContent = 'Сохранение...';
+    renderLoading(editImageProfileBtn, true);
     editImageProfile(linkAvatarInput.value)
         .then((data)=>{
             profileImage.style.backgroundImage = `url(${data.avatar})`;
-        })        .catch((err) => {
+            closePopup(popupProfileImage);
+        })
+        .catch((err) => {
         console.error("Ошибка при обновление аватара:", err);
     })
         .finally(() => {
-            btn.textContent = 'Сохранение';
-            closePopup(popupProfileImage);
+            renderLoading(editImageProfileBtn, false);
         });
 });
 
@@ -214,12 +213,21 @@ getProfile()
                     event.currentTarget, event.currentTarget.closest('.card').querySelector('.card__like-count')),
                 (link, name) => openImagePopup(link, name)));
         })
+            .catch((err) => {
+                console.error('Ошибка загрузки карточек:', err);
+            });
     })
-    .catch((err) => console.error('Ошибка загрузки карточек ', err));
+    .catch((err) => console.error('Ошибка загрузки профиля ', err));
 
 // @todo: Функция удаления карточки
 function handleDeleteCard(event) {
     const cardElement = event.target.closest('.card');
     popupDelete.dataset.cardId = cardElement.dataset.cardId;
     openPopup(popupDelete);
+}
+
+// @todo: Функция изменения состояния текста кнопки в попап окнах
+function renderLoading(buttonElement, isLoading, text = 'Сохранить', loadingText = 'Сохранение...') {
+    buttonElement.disabled = isLoading;
+    buttonElement.textContent = isLoading ? loadingText : text;
 }
