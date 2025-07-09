@@ -1,6 +1,5 @@
 import './pages/index.css';
 import {createCard, deleteCard, likeCard} from './components/card';
-import {initialCards} from './components/cards';
 import {openPopup, closePopup, openImagePopup} from './components/modal';
 import {clearValidation, enableValidation} from "./components/validation";
 import {addCard, apiDeleteCard, editImageProfile, editProfile, getCards, getProfile} from "./components/api";
@@ -30,7 +29,6 @@ const linkInput = popupTypeNewCard.querySelector('.popup__input_type_url');
 const linkAvatarInput = popupProfileImage.querySelector('.popup__input_type_url');
 const profileImage = document.querySelector('.profile__image');
 
-let _idProfile = '';
 // todo Конфигурация валидации
 const validationConfig = {
     formSelector: '.popup__form',
@@ -56,6 +54,7 @@ addModalBtn.addEventListener('click', () => {
     openPopup(popupTypeNewCard);
 })
 
+// @todo: Слушатель клика по кнопки изменения аватара профиля
 profileImageBtn.addEventListener('click', () => {
     profileImageModalForm.reset();
     clearValidation(profileImageModalForm, validationConfig);
@@ -140,6 +139,7 @@ cardDeleteModalForm.addEventListener('submit', (evt) => {
         });
 });
 
+// @todo: Функция редактирования профиля через попап
 profileImageModalForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const btn = popupTypeNewCard.querySelector('.popup__button');
@@ -156,6 +156,7 @@ profileImageModalForm.addEventListener('submit', (evt) => {
         });
 });
 
+// @todo: Слушатель клика по кнопки закрытия попапа
 [popupTypeEdit, popupTypeNewCard, popupTypeImage, popupDelete, popupProfileImage].forEach((popup) => {
     popup.addEventListener('click', (evt) => {
         if (evt.target === popup || evt.target.classList.contains('popup__close')) {
@@ -167,7 +168,7 @@ profileImageModalForm.addEventListener('submit', (evt) => {
 // @todo: Включение валидации полей
 enableValidation(validationConfig);
 
-// @todo: Получаем данные о профиле
+// @todo: Получаем начальных данные (профиля и карточек)
 getProfile().then((data) => {
     setCurrentUser(data);
     profileTitle.textContent = data.name;
@@ -188,7 +189,6 @@ getProfile().then((data) => {
             avatar: card.owner.avatar
         },
     }));
-    placeCardListUl.innerHTML = '';
     cards.forEach(card => {
         placeCardListUl.append(createCard(card,
             (event) => deleteCard(card.id, popupDelete, event),
