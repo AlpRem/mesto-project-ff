@@ -4,6 +4,7 @@ import {initialCards} from './components/cards';
 import {openPopup, closePopup, openImagePopup} from './components/modal';
 import {clearValidation, enableValidation} from "./components/validation";
 import {addCard, apiDeleteCard, editImageProfile, editProfile, getCards, getProfile} from "./components/api";
+import {getCurrentUser, setCurrentUser} from "./components/state";
 
 const placeCardListUl = document.querySelector('.places__list');
 const editModalBtn = document.querySelector('.profile__edit-button');
@@ -90,19 +91,22 @@ cardModalForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     const btn = popupTypeNewCard.querySelector('.popup__button');
     btn.textContent = 'Сохранение...';
+    const user = getCurrentUser();
     addCard({
         name: nameInput.value,
-        link: linkInput.value,
-        owner: {
-            id: _idProfile
-        }
+        link: linkInput.value
     })
         .then((data)=>{
-            placeCardListUl.prepend(createCard(_idProfile,{
+            placeCardListUl.prepend(createCard({
+                id: data._id,
                 name: data.name,
                 link: data.link,
-            },(event) => deleteCard(data, event),
-                (event) => likeCard(data, event),
+                likes: data.likes,
+                owner: {
+                    id: user._id
+                }
+            },(event) => deleteCard(data._id, popupDelete, event),
+                (event) => likeCard(data._id, data.likes, event),
                 openImagePopup));
         })
         .catch((err) => {
@@ -165,16 +169,15 @@ enableValidation(validationConfig);
 
 // @todo: Получаем данные о профиле
 getProfile().then((data) => {
-    _idProfile = data._id;
+    setCurrentUser(data);
     profileTitle.textContent = data.name;
     profileDescription.textContent = data.about;
     profileImage.style.backgroundImage = `url(${data.avatar})`;
+    return getCards();
 })
-
-// @todo: Получаем списка карточек
-getCards().then((data) => {
+    .then((data) => {
     const cards = data.map(card =>({
-        id: card.id,
+        id: card._id,
         name: card.name,
         link: card.link,
         likes: card.likes,
@@ -187,8 +190,8 @@ getCards().then((data) => {
     }));
     placeCardListUl.innerHTML = '';
     cards.forEach(card => {
-        placeCardListUl.append(createCard(_idProfile, card,
-            (event) => deleteCard(card, popupDelete, event),
-            (event) => likeCard(card, event), openImagePopup));
+        placeCardListUl.append(createCard(card,
+            (event) => deleteCard(card.id, popupDelete, event),
+            (event) => likeCard(card.id, card.likes, event), openImagePopup));
     })
 })
